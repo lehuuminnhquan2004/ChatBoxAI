@@ -43,25 +43,7 @@ cd client
 npm install
 ```
 
-4. **Cấu hình môi trường**
 
-Tạo file `.env` trong thư mục `server` với nội dung:
-```env
-PORT=5000
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=your_password
-DB_NAME=chatbox
-
-GEMINI_API_KEY=your_gemini_api_key
-JWT_SECRET=your_jwt_secret
-JWT_EXPIRATION=30m
-```
-
-Tạo file `.env` trong thư mục `client` với nội dung:
-```env
-REACT_APP_API_URL=http://localhost:5000
-```
 
 5. **Import cơ sở dữ liệu**
 - Tạo database `chatbox` trong MySQL
