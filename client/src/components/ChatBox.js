@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   Paper,
   TextField,
@@ -9,9 +9,11 @@ import {
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import CloseIcon from '@mui/icons-material/Close';
-import ChatIcon from '@mui/icons-material/Chat';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 import axios from 'axios';
 import './ChatBox.css';
+import useSpeech from '../hooks/useSpeech';
+import VoiceControls from './VoiceControls';
 
 // Lấy API URL từ biến môi trường
 const API_URL = process.env.REACT_APP_API_URL;
@@ -22,14 +24,77 @@ function ChatBox({ masv }) {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  
+  const { 
+    isListening, 
+    speechText,
+    setSpeechText,
+    startListening, 
+    stopListening, 
+    speak,
+    shouldSendMessage,
+    setShouldSendMessage
+  } = useSpeech();
 
-  const scrollToBottom = () => {
+  // Theo dõi thay đổi của speechText
+  useEffect(() => {
+    if (isListening) {
+      setInput(speechText);
+    }
+  }, [speechText, isListening]);
+
+  const handleSend = useCallback(async () => {
+    const messageToSend = input.trim();
+    if (!messageToSend || !masv || isLoading) return;
+
+    setMessages(prev => [...prev, { text: messageToSend, isUser: true }]);
+    setInput('');
+    setSpeechText('');
+    setIsLoading(true);
+
+    try {
+      const response = await axios.post(`${API_URL}/api/chat`, {
+        message: messageToSend,
+        masv: masv
+      });
+
+      if (response.data && response.data.response) {
+        const aiResponse = { text: response.data.response, isUser: false };
+        setMessages(prev => [...prev, aiResponse]);
+        speak(response.data.response);
+      }
+    } catch (error) {
+      console.error('Lỗi khi gửi tin nhắn:', error);
+      setMessages(prev => [...prev, { 
+        text: 'Xin lỗi, có lỗi xảy ra. Vui lòng thử lại sau.',
+        isUser: false 
+      }]);
+    }
+
+    setIsLoading(false);
+  }, [input, masv, isLoading, setSpeechText, speak]);
+
+  // Xử lý tự động gửi tin nhắn
+  const handleAutoSend = useCallback(() => {
+    if (shouldSendMessage && input.trim()) {
+      handleSend();
+      setShouldSendMessage(false);
+    }
+  }, [shouldSendMessage, input, handleSend, setShouldSendMessage]);
+
+  // Sử dụng effect với handleAutoSend
+  useEffect(() => {
+    handleAutoSend();
+  }, [handleAutoSend]);
+
+  // Cuộn xuống khi có tin nhắn mới
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, scrollToBottom]);
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -49,33 +114,6 @@ function ChatBox({ masv }) {
 
     fetchHistory();
   }, [isOpen, masv]);
-
-  const handleSend = async () => {
-    if (!input.trim() || !masv) return;
-
-    setMessages([...messages, { text: input, isUser: true }]);
-    setInput('');
-    setIsLoading(true);
-
-    try {
-      const response = await axios.post(`${API_URL}/api/chat`, {
-        message: input,
-        masv: masv
-      });
-
-      if (response.data && response.data.response) {
-        setMessages(prev => [...prev, { text: response.data.response, isUser: false }]);
-      }
-    } catch (error) {
-      console.error('Lỗi khi gửi tin nhắn:', error);
-      setMessages(prev => [...prev, { 
-        text: 'Xin lỗi, có lỗi xảy ra. Vui lòng thử lại sau.',
-        isUser: false 
-      }]);
-    }
-
-    setIsLoading(false);
-  };
 
   return (
     <div className="chatbox-container">
@@ -103,9 +141,16 @@ function ChatBox({ masv }) {
                 )}
                 <div className={`message-bubble ${message.isUser ? 'user' : 'ai'}`}>
                   <Typography variant="body2">{message.text}</Typography>
+                  {!message.isUser && (
+                    <VoiceControls
+                      message={message.text}
+                      onSpeak={speak}
+                    />
+                  )}
                 </div>
               </div>
             ))}
+
             {isLoading && (
               <div className="loading-message">
                 <div className="message-bubble ai">
@@ -120,15 +165,32 @@ function ChatBox({ masv }) {
             <TextField
               fullWidth
               size="small"
-              placeholder="Nhập tin nhắn..."
+              placeholder={isListening ? "Đang nghe..." : "Nhập tin nhắn..."}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && !isListening) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
+              disabled={isListening}
               InputProps={{
                 endAdornment: (
-                  <IconButton onClick={handleSend}>
-                    <SendIcon />
-                  </IconButton>
+                  <div className="flex items-center">
+                    <VoiceControls
+                      isListening={isListening}
+                      onStartListening={startListening}
+                      onStopListening={stopListening}
+                      disabled={isLoading}
+                    />
+                    <IconButton 
+                      onClick={handleSend}
+                      disabled={isListening || !input.trim()}
+                    >
+                      <SendIcon />
+                    </IconButton>
+                  </div>
                 ),
               }}
             />
@@ -139,8 +201,14 @@ function ChatBox({ masv }) {
           color="primary" 
           onClick={() => setIsOpen(true)}
           className="chat-fab"
+          sx={{ 
+            backgroundColor:'#036ffc',
+            '&:hover': {
+              backgroundColor: '#4a95f7'
+            }
+          }}
         >
-          <ChatIcon />
+          <SmartToyIcon />
         </Fab>
       )}
     </div>

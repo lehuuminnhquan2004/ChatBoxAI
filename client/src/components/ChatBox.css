@@ -4,6 +4,7 @@
   bottom: 20px;   /* Cách đáy 20px */
   right: 20px;    /* Cách phải 20px */
   z-index: 1000;  /* Hiển thị trên các phần tử khác */
+  
 }
 
 /* Khung chính của chatbox khi mở */
@@ -19,7 +20,7 @@
 /* Phần header của chatbox */
 .chatbox-header {
   padding: 16px;
-  background-color: #1976d2; /* Màu nền xanh */
+  background-color: #000000; /* Màu nền xanh */
   color: white;             /* Màu chữ trắng */
   display: flex;            /* Sử dụng flexbox */
   justify-content: space-between; /* Căn đều các phần tử */
@@ -63,7 +64,7 @@
 
 /* Bong bóng tin nhắn của người dùng */
 .message-bubble.user {
-  background-color: #1976d2; /* Màu nền xanh */
+  background-color: #000000; /* Màu nền xanh */
   color: white;             /* Chữ màu trắng */
   border-radius: 12px 12px 0 12px; /* Bo 3 góc trừ góc trái dưới - kiểu bong bóng chat */
 }
@@ -103,4 +104,31 @@
   display: flex;
   justify-content: flex-start;
   margin-bottom: 8px;
+}
+
+/* Thêm styles mới */
+.voice-controls {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.recording-indicator {
+  position: absolute;
+  top: -2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 50;
+}
+
+.interim-text {
+  position: absolute;
+  bottom: -2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 } 
