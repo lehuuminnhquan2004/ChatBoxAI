@@ -6,6 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Login from './components/Login';
 import Home from './components/Home';
 import PrivateRoute from './components/PrivateRoute';
+import ForgotPassword from './components/ForgotPassword';
 
 const theme = createTheme({
   palette: {
@@ -26,6 +27,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route
             path="/"
             element={

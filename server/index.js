@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
 const authRoutes = require('./routes/auth');
+const forgotPasswordRoutes = require('./routes/forgotPassword');
 const pool = require('./config/db');
 const chatRoutes = require('./routes/chatbox');
 
@@ -40,6 +41,7 @@ app.get('/api/test', (req, res) => {
 
 // Định nghĩa các routes chính
 app.use('/api/auth', authRoutes);
+app.use('/api/forgot-password', forgotPasswordRoutes);
 app.use('/api/chat', chatRoutes);
 
 // Xử lý các yêu cầu không tìm thấy (404)

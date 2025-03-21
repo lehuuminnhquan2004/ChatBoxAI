@@ -95,7 +95,7 @@ function Login() {
 
         <div className="text-center">
           <button 
-            onClick={() => {/* Xử lý quên mật khẩu */}} 
+            onClick={() => navigate('/forgot-password')} 
             className="text-sm text-indigo-600 hover:text-indigo-800"
           >
             Quên mật khẩu?
