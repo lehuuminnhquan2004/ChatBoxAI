@@ -16,6 +16,7 @@ import {
   ListItemText,
   useTheme,
   useMediaQuery,
+  Divider,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -26,8 +27,9 @@ import {
 } from '@mui/icons-material';
 import authService from '../services/authService';
 
-// Định nghĩa chiều rộng của sidebar
+// Định nghĩa chiều rộng của sidebar khi thu gọn và mở rộng
 const drawerWidth = 240;
+const collapsedDrawerWidth = 70;
 
 // Component chính MainLayout - Layout chung cho toàn bộ ứng dụng
 function MainLayout({ children }) {
@@ -35,6 +37,7 @@ function MainLayout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   // State để kiểm soát menu dropdown của user
   const [anchorEl, setAnchorEl] = useState(null);
+  const [isHovered, setIsHovered] = useState(false);
   const theme = useTheme();
   // Kiểm tra xem có phải đang ở chế độ mobile không (màn hình < 600px)
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -96,17 +99,30 @@ function MainLayout({ children }) {
 
   // Component sidebar chứa logo và menu items
   const drawer = (
-    <div className="h-full bg-white">
+    <div 
+      className="h-full bg-white"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {/* Logo */}
-      <div className="p-4">
+      <Box 
+        sx={{ 
+          p: 2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderBottom: '1px solid #e0e0e0'
+        }}
+      >
         <img
           src="/logo.png"
           alt="Logo"
-          className="w-32 h-auto mx-auto"
+          className="w-10 h-auto"
         />
-      </div>
-      {/* Danh sách menu items */}
-      <List>
+      </Box>
+      
+      {/* Menu Items */}
+      <List sx={{ mt: 2 }}>
         {menuItems.map((item) => (
           <ListItem
             button
@@ -115,12 +131,43 @@ function MainLayout({ children }) {
               navigate(item.path);
               if (isMobile) setMobileOpen(false);
             }}
-            className="hover:bg-gray-100"
+            sx={{
+              mx: 1,
+              borderRadius: '8px',
+              '&:hover': {
+                backgroundColor: '#f5f5f5',
+              },
+              '&.Mui-selected': {
+                backgroundColor: '#e3f2fd',
+                '&:hover': {
+                  backgroundColor: '#bbdefb',
+                },
+                '& .MuiListItemIcon-root': {
+                  color: '#1976d2',
+                },
+              }
+            }}
           >
-            <ListItemIcon className="text-gray-600">
+            <ListItemIcon 
+              sx={{ 
+                minWidth: 40,
+                color: '#757575',
+                transition: 'color 0.2s'
+              }}
+            >
               {item.icon}
             </ListItemIcon>
-            <ListItemText primary={item.text} />
+            {isHovered && (
+              <ListItemText 
+                primary={item.text}
+                sx={{
+                  '& .MuiListItemText-primary': {
+                    fontSize: '0.9rem',
+                    fontWeight: 500
+                  }
+                }}
+              />
+            )}
           </ListItem>
         ))}
       </List>
@@ -131,7 +178,15 @@ function MainLayout({ children }) {
   return (
     <Box sx={{ display: 'flex' }}>
       {/* Thanh điều hướng trên cùng */}
-      <AppBar position="fixed" className="bg-white shadow-md" sx={{ backgroundColor: '#00dbff', height: '60px' }}>
+      <AppBar 
+        position="fixed" 
+        sx={{ 
+          backgroundColor: '#ffffff',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          height: '64px',
+          borderBottom: '1px solid #e0e0e0'
+        }}
+      >
         <Toolbar>
           {/* Nút menu cho mobile */}
           <IconButton
@@ -139,64 +194,111 @@ function MainLayout({ children }) {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            className="text-gray-600"
+            sx={{ color: '#757575' }}
           >
             <MenuIcon />
           </IconButton>
           
           {/* Tiêu đề */}
-          <Typography variant="h6" noWrap component="div" className="flex-grow text-gray-800">
-            {!isMobile && 'Hệ thống Chat AI'}
+          <Typography 
+            variant="h6" 
+            noWrap 
+            component="div" 
+            sx={{ 
+              flexGrow: 1,
+              color: '#1976d2',
+              fontWeight: 600,
+              display: { xs: 'none', sm: 'block' },
+              fontSize: '1.25rem',
+              letterSpacing: '0.5px',
+              textTransform: 'uppercase',
+              background: 'linear-gradient(45deg, #1976d2 30%, #2196f3 90%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              textShadow: '0 2px 4px rgba(0,0,0,0.1)',
+              ml: { sm: isHovered ? `${drawerWidth}px` : `${collapsedDrawerWidth}px` },
+              transition: theme.transitions.create('margin', {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+              }),
+            }}
+          >
+            Hệ Thống Chat AI
           </Typography>
 
           {/* Avatar và tên user */}
-          <div className="flex items-center">
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <button
               onClick={handleMenu}
-              className="flex items-center px-2 py-1 bg-blue-700 hover:bg-blue-800 rounded-full transition-colors duration-200 shadow-md hover:shadow-lg"
+              className="flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-full transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <Avatar
                 src={user?.hinhanh ? `${process.env.REACT_APP_API_URL}/images/${user.hinhanh}` : null}
                 alt={user?.tensv}
-                className="w-6 h-6 mr-2 border-2 border-white"
+                sx={{ 
+                  width: 32, 
+                  height: 32, 
+                  mr: 1,
+                  border: '2px solid white'
+                }}
               />
-              {!isMobile && (
-                <span className="text-white font-medium">{user?.tensv}</span>
-              )}
+              <span className="text-white font-medium text-sm">
+                {!isMobile && user?.tensv}
+              </span>
             </button>
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
               onClose={handleClose}
-              className="mt-2"
+              PaperProps={{
+                sx: {
+                  mt: 1.5,
+                  borderRadius: 2,
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                }
+              }}
             >
-              <MenuItem onClick={() => {
-                navigate('/profile');
-                handleClose();
-              }}>
+              <MenuItem 
+                onClick={() => {
+                  navigate('/profile');
+                  handleClose();
+                }}
+                sx={{ py: 1 }}
+              >
                 <ListItemIcon>
-                  <PersonIcon fontSize="small" />
+                  <PersonIcon fontSize="small" sx={{ color: '#757575' }} />
                 </ListItemIcon>
-                <span>Thông tin cá nhân</span>
+                <span className="text-sm">Thông tin cá nhân</span>
               </MenuItem>
-              <MenuItem onClick={() => {
-                handleLogout();
-                handleClose();
-              }}>
+              <Divider />
+              <MenuItem 
+                onClick={() => {
+                  handleLogout();
+                  handleClose();
+                }}
+                sx={{ py: 1 }}
+              >
                 <ListItemIcon>
-                  <LogoutIcon fontSize="small" />
+                  <LogoutIcon fontSize="small" sx={{ color: '#757575' }} />
                 </ListItemIcon>
-                <span>Đăng xuất</span>
+                <span className="text-sm">Đăng xuất</span>
               </MenuItem>
             </Menu>
-          </div>
+          </Box>
         </Toolbar>
       </AppBar>
 
       {/* Sidebar */}
       <Box
         component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        sx={{ 
+          width: { sm: isHovered ? drawerWidth : collapsedDrawerWidth }, 
+          flexShrink: { sm: 0 },
+          transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+          }),
+        }}
       >
         {/* Drawer cho mobile - hiển thị tạm thời */}
         <Drawer
@@ -208,7 +310,15 @@ function MainLayout({ children }) {
           }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: isHovered ? drawerWidth : collapsedDrawerWidth,
+              borderRight: '1px solid #e0e0e0',
+              transition: theme.transitions.create('width', {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+              }),
+            },
           }}
         >
           {drawer}
@@ -218,7 +328,15 @@ function MainLayout({ children }) {
           variant="permanent"
           sx={{
             display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: isHovered ? drawerWidth : collapsedDrawerWidth,
+              borderRight: '1px solid #e0e0e0',
+              transition: theme.transitions.create('width', {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+              }),
+            },
           }}
           open
         >
@@ -232,8 +350,14 @@ function MainLayout({ children }) {
         sx={{
           flexGrow: 1,
           p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          marginTop: '60px',
+          width: { sm: `calc(100% - ${isHovered ? drawerWidth : collapsedDrawerWidth}px)` },
+          marginTop: '64px',
+          backgroundColor: '#f5f5f5',
+          minHeight: 'calc(100vh - 64px)',
+          transition: theme.transitions.create('width', {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+          }),
         }}
       >
         {children}
