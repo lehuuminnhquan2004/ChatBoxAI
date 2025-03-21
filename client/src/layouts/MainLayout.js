@@ -267,23 +267,26 @@ function MainLayout({ children }) {
           </Typography>
 
           {/* Avatar và tên user */}
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ ml: 'auto' }}>
             <button
               onClick={handleMenu}
-              className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-full transition-all duration-200 shadow-sm hover:shadow-md"
+              className="flex items-center px-2 py-1 bg-blue-600 hover:bg-blue-700 rounded-full transition-all duration-200 shadow-sm hover:shadow-md"
+              style={{ 
+                padding: isMobile ? '4px' : '8px 16px',
+                gap: isMobile ? '0' : '6px'
+              }}
             >
               <Avatar
                 src={user?.hinhanh ? `${process.env.REACT_APP_API_URL}/images/${user.hinhanh}` : null}
                 alt={user?.tensv}
                 sx={{ 
-                  width: 36, 
-                  height: 36, 
-                  mr: 1.5,
+                  width: isMobile ? 32 : 36, 
+                  height: isMobile ? 32 : 36, 
                   border: '2px solid white'
                 }}
               />
-              <span className="text-white font-medium text-sm">
-                {!isMobile && user?.tensv}
+              <span className="text-white font-medium text-sm" style={{ display: isMobile ? 'none' : 'block' }}>
+                {user?.tensv}
               </span>
             </button>
             <Menu

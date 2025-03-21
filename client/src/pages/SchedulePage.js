@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Table,
   TableBody,
@@ -23,6 +23,7 @@ import {
 } from '@mui/icons-material';
 import axios from 'axios';
 import authService from '../services/authService';
+import ChatBox from '../components/ChatBox';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -30,7 +31,6 @@ function SchedulePage() {
   const [schedule, setSchedule] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentWeek, setCurrentWeek] = useState(0);
-  const [error, setError] = useState(null);
   const [summary, setSummary] = useState(null);
   const user = authService.getUser();
 
@@ -81,7 +81,7 @@ function SchedulePage() {
   }, [user?.masv]);
 
   // Tạo mảng 4x7 để lưu thời khóa biểu (4 ca x 7 ngày)
-  const createScheduleMatrix = () => {
+  const createScheduleMatrix = useCallback(() => {
     const matrix = Array(4).fill().map(() => Array(7).fill(''));
     const tooltipMatrix = Array(4).fill().map(() => Array(7).fill(''));
     
@@ -139,7 +139,7 @@ function SchedulePage() {
     }
 
     return { matrix, tooltipMatrix };
-  };
+  }, [schedule, currentWeek]);
 
   const getWeekRange = () => {
     const today = new Date();
@@ -173,7 +173,7 @@ function SchedulePage() {
   useEffect(() => {
     console.log('Schedule data:', schedule);
     console.log('Schedule matrix:', createScheduleMatrix());
-  }, [schedule, currentWeek]);
+  }, [schedule, currentWeek, createScheduleMatrix]);
 
   if (loading) {
     return (
@@ -188,42 +188,45 @@ function SchedulePage() {
 
   return (
     <Box sx={{ 
-      p: 3,
-      maxWidth: '100%',
+      p: { xs: 1, sm: 2 },
+      maxWidth: '1200px',
+      margin: '0 auto',
       overflowX: 'auto',
       backgroundColor: '#f5f5f5',
       minHeight: 'calc(100vh - 64px)'
     }}>
-      <Card sx={{ mb: 4, borderRadius: 2, boxShadow: 3 }}>
-        <CardContent>
+      <Card sx={{ mb: { xs: 2, sm: 3 }, borderRadius: 2, boxShadow: 2 }}>
+        <CardContent sx={{ p: { xs: 1.5, sm: 2 } }}>
           <Box sx={{ 
             display: 'flex', 
             justifyContent: 'space-between', 
             alignItems: 'center',
             flexWrap: 'wrap',
-            gap: 2
+            gap: { xs: 1, sm: 2 }
           }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <CalendarIcon sx={{ color: '#1a237e', fontSize: 32 }} />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
+              <CalendarIcon sx={{ color: '#1a237e', fontSize: { xs: 24, sm: 28 } }} />
               <Box>
                 <Typography 
-                  variant="h4" 
+                  variant="h5" 
                   sx={{ 
                     color: '#1a237e', 
                     fontWeight: 'bold',
                     background: 'linear-gradient(45deg, #1a237e 30%, #2196f3 90%)',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
+                    fontSize: { xs: '1.5rem', sm: '1.8rem' }
                   }}
                 >
                   Thời Khóa Biểu
                 </Typography>
                 {summary && (
                   <Typography 
-                    variant="subtitle1" 
+                    variant="subtitle2" 
                     sx={{ 
                       color: '#666',
-                      mt: 0.5
+                      mt: 0.5,
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' }
                     }}
                   >
                     Số môn học: {summary.soMonHoc} | 
@@ -236,18 +239,20 @@ function SchedulePage() {
             <Box sx={{ 
               display: 'flex', 
               alignItems: 'center',
-              gap: 2,
+              gap: { xs: 1, sm: 1.5 },
               flexWrap: 'wrap'
             }}>
               <Button
                 variant="contained"
                 onClick={handleCurrentWeek}
+                size="small"
                 sx={{ 
                   backgroundColor: '#1a237e',
                   color: 'white',
-                  borderRadius: '8px',
-                  px: 2,
-                  py: 1,
+                  borderRadius: '6px',
+                  px: { xs: 1.5, sm: 2 },
+                  py: 0.5,
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
                   '&:hover': {
                     backgroundColor: '#0d47a1'
                   }
@@ -260,18 +265,19 @@ function SchedulePage() {
                 display: 'flex', 
                 alignItems: 'center',
                 backgroundColor: '#fff',
-                borderRadius: '8px',
+                borderRadius: '6px',
                 border: '1px solid #e0e0e0',
                 overflow: 'hidden'
               }}>
                 <IconButton 
                   onClick={handlePreviousWeek}
+                  size="small"
                   sx={{ 
                     color: '#1a237e',
                     borderRadius: 0,
                     borderRight: '1px solid #e0e0e0',
-                    height: '40px',
-                    width: '40px',
+                    height: { xs: '28px', sm: '32px' },
+                    width: { xs: '28px', sm: '32px' },
                     '&:hover': {
                       backgroundColor: '#f5f5f5'
                     }
@@ -283,20 +289,21 @@ function SchedulePage() {
                 <Typography sx={{ 
                   color: '#1a237e',
                   fontWeight: 500,
-                  px: 3,
-                  fontSize: '0.95rem'
+                  px: { xs: 1.5, sm: 2 },
+                  fontSize: { xs: '0.8rem', sm: '0.9rem' }
                 }}>
                   {getWeekRange()}
                 </Typography>
                 
                 <IconButton 
                   onClick={handleNextWeek}
+                  size="small"
                   sx={{ 
                     color: '#1a237e',
                     borderRadius: 0,
                     borderLeft: '1px solid #e0e0e0',
-                    height: '40px',
-                    width: '40px',
+                    height: { xs: '28px', sm: '32px' },
+                    width: { xs: '28px', sm: '32px' },
                     '&:hover': {
                       backgroundColor: '#f5f5f5'
                     }
@@ -313,13 +320,12 @@ function SchedulePage() {
       <TableContainer 
         component={Paper} 
         sx={{ 
-          boxShadow: 3,
+          boxShadow: 2,
           borderRadius: 2,
-          overflow: 'hidden',
-          minWidth: '1000px',
+          overflow: 'auto',
+          minWidth: { xs: '100%', sm: '800px' },
           backgroundColor: 'white',
-          margin: '0 auto',
-          maxWidth: '1200px'
+          margin: '0 auto'
         }}
       >
         <Table sx={{ tableLayout: 'fixed' }}>
@@ -331,12 +337,12 @@ function SchedulePage() {
                   backgroundColor: '#1a237e',
                   color: 'white',
                   textAlign: 'center',
-                  width: '100px',
+                  width: { xs: '60px', sm: '80px' },
                   position: 'sticky',
                   left: 0,
                   zIndex: 1,
-                  fontSize: '1rem',
-                  py: 1.5,
+                  fontSize: { xs: '0.8rem', sm: '0.9rem' },
+                  py: { xs: 0.75, sm: 1 },
                   border: '1px solid rgba(255, 255, 255, 0.2)'
                 }}
               >
@@ -350,9 +356,9 @@ function SchedulePage() {
                     backgroundColor: '#1a237e',
                     color: 'white',
                     textAlign: 'center',
-                    width: 'calc((100% - 100px) / 7)',
-                    py: 1.5,
-                    fontSize: '1rem',
+                    width: { xs: 'calc((100% - 60px) / 7)', sm: 'calc((100% - 80px) / 7)' },
+                    py: { xs: 0.75, sm: 1 },
+                    fontSize: { xs: '0.8rem', sm: '0.9rem' },
                     border: '1px solid rgba(255, 255, 255, 0.2)'
                   }}
                 >
@@ -376,12 +382,12 @@ function SchedulePage() {
                     fontWeight: 'bold',
                     backgroundColor: '#e3f2fd',
                     textAlign: 'center',
-                    width: '100px',
-                    py: 1.5,
+                    width: { xs: '60px', sm: '80px' },
+                    py: { xs: 0.75, sm: 1 },
                     position: 'sticky',
                     left: 0,
                     zIndex: 1,
-                    fontSize: '1rem',
+                    fontSize: { xs: '0.8rem', sm: '0.9rem' },
                     border: '1px solid #e0e0e0'
                   }}
                 >
@@ -395,14 +401,14 @@ function SchedulePage() {
                       whiteSpace: 'pre-line',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
-                      height: '120px',
+                      height: { xs: '80px', sm: '100px' },
                       verticalAlign: 'top',
                       background: cell ? 'linear-gradient(45deg, #e3f2fd 30%, #bbdefb 90%)' : 'white',
-                      py: 2,
-                      px: 3,
+                      py: { xs: 1, sm: 1.5 },
+                      px: { xs: 1.5, sm: 2 },
                       border: '1px solid #e0e0e0',
-                      fontSize: '0.95rem',
-                      width: 'calc((100% - 100px) / 7)',
+                      fontSize: { xs: '0.75rem', sm: '0.85rem' },
+                      width: { xs: 'calc((100% - 60px) / 7)', sm: 'calc((100% - 80px) / 7)' },
                       transition: 'all 0.3s ease',
                       '&:hover': {
                         background: cell ? 'linear-gradient(45deg, #bbdefb 30%, #90caf9 90%)' : '#f5f5f5',
@@ -415,23 +421,23 @@ function SchedulePage() {
                       <Tooltip 
                         title={
                           <Box sx={{ 
-                            p: 1.5,
+                            p: { xs: 1, sm: 1.5 },
                             backgroundColor: 'rgba(255, 249, 196, 0.95)',
                             borderRadius: 1,
                             width: 'auto',
-                            minWidth: '200px',
-                            maxWidth: '400px',
+                            minWidth: { xs: '180px', sm: '200px' },
+                            maxWidth: { xs: '250px', sm: '300px' },
                             border: '1px solid #ffd54f',
                             position: 'relative'
                           }}>
                             <Typography variant="body2" sx={{ 
                               whiteSpace: 'nowrap',
                               color: '#333',
-                              lineHeight: 1.6,
-                              fontSize: '0.85rem',
+                              lineHeight: 1.5,
+                              fontSize: { xs: '0.75rem', sm: '0.8rem' },
                               display: 'flex',
                               flexWrap: 'wrap',
-                              gap: '8px',
+                              gap: { xs: '4px', sm: '6px' },
                               '& strong': {
                                 color: '#1a237e',
                                 fontWeight: 600,
@@ -490,6 +496,8 @@ function SchedulePage() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <ChatBox masv={user?.masv} />
     </Box>
   );
 }
