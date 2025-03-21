@@ -27,9 +27,8 @@ import {
 } from '@mui/icons-material';
 import authService from '../services/authService';
 
-// Định nghĩa chiều rộng của sidebar khi thu gọn và mở rộng
+// Định nghĩa chiều rộng của sidebar
 const drawerWidth = 240;
-const collapsedDrawerWidth = 70;
 
 // Component chính MainLayout - Layout chung cho toàn bộ ứng dụng
 function MainLayout({ children }) {
@@ -37,7 +36,6 @@ function MainLayout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   // State để kiểm soát menu dropdown của user
   const [anchorEl, setAnchorEl] = useState(null);
-  const [isHovered, setIsHovered] = useState(false);
   const theme = useTheme();
   // Kiểm tra xem có phải đang ở chế độ mobile không (màn hình < 600px)
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -100,9 +98,7 @@ function MainLayout({ children }) {
   // Component sidebar chứa logo và menu items
   const drawer = (
     <div 
-      className="h-full bg-white"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className="h-full bg-white shadow-sm"
     >
       {/* Logo */}
       <Box 
@@ -110,19 +106,44 @@ function MainLayout({ children }) {
           p: 2,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
-          borderBottom: '1px solid #e0e0e0'
+          justifyContent: 'flex-start',
+          borderBottom: '1px solid #e0e0e0',
+          background: 'linear-gradient(135deg, #1976d2 0%, #2196f3 100%)',
+          color: 'white',
+          height: '64px',
+          position: 'relative'
         }}
       >
-        <img
-          src="/logo.png"
-          alt="Logo"
-          className="w-10 h-auto"
-        />
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            width: '100%',
+            pl: 2
+          }}
+        >
+          <img
+            src="/logo.png"
+            alt="Logo"
+            className="w-10 h-auto"
+          />
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              ml: 2,
+              fontWeight: 600,
+              fontSize: '1.1rem',
+              letterSpacing: '0.5px'
+            }}
+          >
+            ChatBox AI
+          </Typography>
+        </Box>
       </Box>
       
       {/* Menu Items */}
-      <List sx={{ mt: 2 }}>
+      <List sx={{ mt: 2, px: 1 }}>
         {menuItems.map((item) => (
           <ListItem
             button
@@ -132,10 +153,18 @@ function MainLayout({ children }) {
               if (isMobile) setMobileOpen(false);
             }}
             sx={{
-              mx: 1,
-              borderRadius: '8px',
+              mx: 0.5,
+              borderRadius: '12px',
+              mb: 0.5,
+              transition: 'all 0.2s ease-in-out',
+              pl: 2,
               '&:hover': {
-                backgroundColor: '#f5f5f5',
+                backgroundColor: 'rgba(25, 118, 210, 0.08)',
+                transform: 'translateX(4px)',
+                '& .MuiListItemIcon-root': {
+                  color: '#1976d2',
+                  transform: 'scale(1.1)'
+                }
               },
               '&.Mui-selected': {
                 backgroundColor: '#e3f2fd',
@@ -145,6 +174,10 @@ function MainLayout({ children }) {
                 '& .MuiListItemIcon-root': {
                   color: '#1976d2',
                 },
+                '& .MuiListItemText-primary': {
+                  color: '#1976d2',
+                  fontWeight: 600
+                }
               }
             }}
           >
@@ -152,22 +185,24 @@ function MainLayout({ children }) {
               sx={{ 
                 minWidth: 40,
                 color: '#757575',
-                transition: 'color 0.2s'
+                transition: 'all 0.2s ease-in-out',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
             >
               {item.icon}
             </ListItemIcon>
-            {isHovered && (
-              <ListItemText 
-                primary={item.text}
-                sx={{
-                  '& .MuiListItemText-primary': {
-                    fontSize: '0.9rem',
-                    fontWeight: 500
-                  }
-                }}
-              />
-            )}
+            <ListItemText 
+              primary={item.text}
+              sx={{
+                '& .MuiListItemText-primary': {
+                  fontSize: '0.9rem',
+                  fontWeight: 500,
+                  transition: 'all 0.2s ease-in-out'
+                }
+              }}
+            />
           </ListItem>
         ))}
       </List>
@@ -182,7 +217,7 @@ function MainLayout({ children }) {
         position="fixed" 
         sx={{ 
           backgroundColor: '#ffffff',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
           height: '64px',
           borderBottom: '1px solid #e0e0e0'
         }}
@@ -194,7 +229,12 @@ function MainLayout({ children }) {
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ color: '#757575' }}
+            sx={{ 
+              color: '#1976d2',
+              '&:hover': {
+                backgroundColor: 'rgba(25, 118, 210, 0.08)'
+              }
+            }}
           >
             <MenuIcon />
           </IconButton>
@@ -209,14 +249,14 @@ function MainLayout({ children }) {
               color: '#1976d2',
               fontWeight: 600,
               display: { xs: 'none', sm: 'block' },
-              fontSize: '1.25rem',
+              fontSize: '1.3rem',
               letterSpacing: '0.5px',
               textTransform: 'uppercase',
               background: 'linear-gradient(45deg, #1976d2 30%, #2196f3 90%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               textShadow: '0 2px 4px rgba(0,0,0,0.1)',
-              ml: { sm: isHovered ? `${drawerWidth}px` : `${collapsedDrawerWidth}px` },
+              ml: { sm: `${drawerWidth}px` },
               transition: theme.transitions.create('margin', {
                 easing: theme.transitions.easing.sharp,
                 duration: theme.transitions.duration.enteringScreen,
@@ -230,15 +270,15 @@ function MainLayout({ children }) {
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <button
               onClick={handleMenu}
-              className="flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 rounded-full transition-all duration-200 shadow-sm hover:shadow-md"
+              className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-full transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <Avatar
                 src={user?.hinhanh ? `${process.env.REACT_APP_API_URL}/images/${user.hinhanh}` : null}
                 alt={user?.tensv}
                 sx={{ 
-                  width: 32, 
-                  height: 32, 
-                  mr: 1,
+                  width: 36, 
+                  height: 36, 
+                  mr: 1.5,
                   border: '2px solid white'
                 }}
               />
@@ -254,7 +294,8 @@ function MainLayout({ children }) {
                 sx: {
                   mt: 1.5,
                   borderRadius: 2,
-                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  minWidth: 200
                 }
               }}
             >
@@ -263,12 +304,12 @@ function MainLayout({ children }) {
                   navigate('/profile');
                   handleClose();
                 }}
-                sx={{ py: 1 }}
+                sx={{ py: 1.5 }}
               >
                 <ListItemIcon>
-                  <PersonIcon fontSize="small" sx={{ color: '#757575' }} />
+                  <PersonIcon fontSize="small" sx={{ color: '#1976d2' }} />
                 </ListItemIcon>
-                <span className="text-sm">Thông tin cá nhân</span>
+                <span className="text-sm font-medium">Thông tin cá nhân</span>
               </MenuItem>
               <Divider />
               <MenuItem 
@@ -276,12 +317,12 @@ function MainLayout({ children }) {
                   handleLogout();
                   handleClose();
                 }}
-                sx={{ py: 1 }}
+                sx={{ py: 1.5 }}
               >
                 <ListItemIcon>
-                  <LogoutIcon fontSize="small" sx={{ color: '#757575' }} />
+                  <LogoutIcon fontSize="small" sx={{ color: '#1976d2' }} />
                 </ListItemIcon>
-                <span className="text-sm">Đăng xuất</span>
+                <span className="text-sm font-medium">Đăng xuất</span>
               </MenuItem>
             </Menu>
           </Box>
@@ -292,7 +333,7 @@ function MainLayout({ children }) {
       <Box
         component="nav"
         sx={{ 
-          width: { sm: isHovered ? drawerWidth : collapsedDrawerWidth }, 
+          width: { sm: drawerWidth }, 
           flexShrink: { sm: 0 },
           transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
@@ -312,7 +353,7 @@ function MainLayout({ children }) {
             display: { xs: 'block', sm: 'none' },
             '& .MuiDrawer-paper': { 
               boxSizing: 'border-box', 
-              width: isHovered ? drawerWidth : collapsedDrawerWidth,
+              width: drawerWidth,
               borderRight: '1px solid #e0e0e0',
               transition: theme.transitions.create('width', {
                 easing: theme.transitions.easing.sharp,
@@ -330,7 +371,7 @@ function MainLayout({ children }) {
             display: { xs: 'none', sm: 'block' },
             '& .MuiDrawer-paper': { 
               boxSizing: 'border-box', 
-              width: isHovered ? drawerWidth : collapsedDrawerWidth,
+              width: drawerWidth,
               borderRight: '1px solid #e0e0e0',
               transition: theme.transitions.create('width', {
                 easing: theme.transitions.easing.sharp,
@@ -350,9 +391,9 @@ function MainLayout({ children }) {
         sx={{
           flexGrow: 1,
           p: 3,
-          width: { sm: `calc(100% - ${isHovered ? drawerWidth : collapsedDrawerWidth}px)` },
+          width: { sm: `calc(100% - ${drawerWidth}px)` },
           marginTop: '64px',
-          backgroundColor: '#f5f5f5',
+          backgroundColor: '#f8f9fa',
           minHeight: 'calc(100vh - 64px)',
           transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
