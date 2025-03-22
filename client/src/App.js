@@ -2,14 +2,12 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
 
 import Login from './components/Login';
 import Home from './components/Home';
 import Profile from './components/Profile';
 import PrivateRoute from './components/PrivateRoute';
 import ForgotPassword from './components/ForgotPassword';
-import ChangePassword from './components/ChangePassword';
 
 const theme = createTheme({
   palette: {
@@ -35,7 +33,19 @@ function App() {
             path="/"
             element={
               <PrivateRoute>
-                <Home />
+                <MainLayout>
+                  <Home />
+                </MainLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/schedule"
+            element={
+              <PrivateRoute>
+                <MainLayout>
+                  <SchedulePage />
+                </MainLayout>
               </PrivateRoute>
             }
           />

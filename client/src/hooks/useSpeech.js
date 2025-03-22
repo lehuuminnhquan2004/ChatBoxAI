@@ -148,7 +148,7 @@ const useSpeech = () => {
       utterance.voice = selectedVoice;
     }
     utterance.lang = 'vi-VN';
-    utterance.rate = 1.5;
+    utterance.rate = 1.5 ;
     utterance.pitch = 1;
     utterance.text = preparedText;
 

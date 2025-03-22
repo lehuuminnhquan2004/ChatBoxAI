@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th3 20, 2025 lúc 01:28 PM
+-- Thời gian đã tạo: Th3 21, 2025 lúc 06:16 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -61,12 +61,13 @@ CREATE TABLE `lichhoc` (
 --
 
 INSERT INTO `lichhoc` (`STT`, `Thu`, `Ca`, `phong`, `masv`, `mamh`, `ngaybatdau`, `ngayketthuc`) VALUES
-(1, 4, 3, '803', 'DH52201286', '001', '2005-03-18', '2005-04-18'),
-(2, 7, 1, '607', 'DH52201286', '002', '2005-03-19', '2005-04-18'),
-(3, 6, 1, '807', 'DH52201286', '003', '2005-03-19', '2005-04-18'),
-(4, 2, 1, '607', 'DH52201105', '001', '2005-03-19', '2005-04-18'),
-(5, 3, 3, '707', 'DH52201105', '002', '2005-03-19', '2005-04-18'),
-(6, 6, 4, '807', 'DH52201105', '003', '2005-03-19', '2005-04-18');
+(1, 4, 3, '803', 'DH52201286', '001', '2025-03-18', '2025-04-18'),
+(3, 6, 1, '807', 'DH52201286', '003', '2025-03-18', '2025-04-18'),
+(4, 2, 1, '607', 'DH52201105', '001', '2025-03-18', '2025-04-18'),
+(5, 3, 3, '707', 'DH52201105', '002', '2025-03-18', '2025-04-18'),
+(6, 6, 4, '807', 'DH52201105', '003', '2025-03-18', '2025-04-18'),
+(7, 7, 1, '808', 'DH52201286', '004', '2025-02-18', '2025-04-18'),
+(8, 7, 1, '808', 'DH52201105', '004', '2025-02-18', '2025-04-18');
 
 -- --------------------------------------------------------
 
@@ -87,7 +88,22 @@ CREATE TABLE `lichsuchat` (
 --
 
 INSERT INTO `lichsuchat` (`id`, `masv`, `nguoidung_chat`, `ai_rep`, `thoigianchat`) VALUES
-(62, 'DH52201105', 'xin chào bây giờ là mấy giờ', 'Chào bạn! Bây giờ là 18:07.\n', '2025-03-20 18:07:54');
+(91, 'DH52201105', 'xin chào', 'Chào Yến Ngọc.\n', '2025-03-21 13:33:28'),
+(92, 'DH52201105', 'thời khoá biểu của tôi như thế nào', 'Chào Yến Ngọc, thứ 6 này bạn có môn CSS của thầy Viễn Anh Tho lúc 15h tại phòng 807 nhé.\n', '2025-03-21 13:33:44'),
+(93, 'DH52201105', 'hãy nói chi tiết thời khóa biểu của tôi', 'Chào Yến Ngọc,\n\nThứ 2, ca 1 (7h30 - 9h): HTML, thầy Quan Le Huu Minh, phòng 607.\nThứ 3, ca 3 (12h30 - 15h): JavaScript, thầy QuanDepTrai, phòng 707.\nThứ 6, ca 4 (15h - 17h30): CSS, thầy Viễn Anh Tho, phòng 807.\n', '2025-03-21 13:34:02'),
+(94, 'DH52201105', 'Xin chào.', 'Chào Yến Ngọc.\n', '2025-03-21 13:46:20'),
+(95, 'DH52201105', 'Bây giờ tôi còn kịp đi học không?', 'Chào Yến Ngọc, bây giờ là 13:46 thứ Sáu ngày 21 tháng 3, bạn còn kịp giờ học CSS của thầy Viễn Anh Tho lúc 15h tại phòng 807 nhé.\n', '2025-03-21 13:46:41'),
+(96, 'DH52201105', 'Cảm ơn bạn.', 'Chào Yến Ngọc, không có gì. Chúc bạn học tốt môn CSS!\n', '2025-03-21 14:08:06'),
+(97, 'DH52201105', 'Xin chào bạn.', 'Chào Yến Ngọc.\n', '2025-03-21 14:15:15'),
+(98, 'DH52201105', 'Tôi buồn quá, bạn có thể tâm sự với tôi không?', 'Chào Yến Ngọc, tôi hiểu mà. Chuyện gì làm bạn buồn vậy?\n', '2025-03-21 14:16:32'),
+(99, 'DH52201105', 'Tại sao bạn đọc lại bị thiếu chứ đầu tiên vậy?', 'Chào Yến Ngọc, tôi vẫn luôn ở đây lắng nghe bạn mà. Thiếu sót ở đâu, bạn cứ nói nhé.\n', '2025-03-21 14:16:52'),
+(100, 'DH52201105', 'Ok bạn.', 'Chào Yến Ngọc, có gì cứ chia sẻ với tôi nhé.\n', '2025-03-21 14:17:07'),
+(101, 'DH52201105', 'bạn là ai thuộc công ty nào', 'Chào Yến Ngọc, tôi là trợ lý ảo của trường, luôn sẵn sàng hỗ trợ bạn.\n', '2025-03-21 14:19:43'),
+(102, 'DH52201105', 'Xin chào.', 'Chào Yến Ngọc.\n', '2025-03-21 14:54:46'),
+(103, 'DH52201286', 'Xin chào.', 'Chào Quân, có gì cần hỗ trợ không?\n', '2025-03-21 23:26:15'),
+(104, 'DH52201105', 'Xin chào bạn.', 'Chào Yến Ngọc.\n', '2025-03-21 23:52:33'),
+(105, 'DH52201105', 'Hôm nay tôi có muốn gì không?', 'Chào Yến Ngọc, hôm nay bạn có môn CSS lúc 15h tại phòng 807 nhé.\n', '2025-03-21 23:52:45'),
+(106, 'DH52201286', 'xin chào bạn mấy giờ rồi', 'Chào Quân, hiện tại là 23:59.\n', '2025-03-21 23:59:59');
 
 -- --------------------------------------------------------
 
@@ -108,7 +124,8 @@ CREATE TABLE `monhoc` (
 INSERT INTO `monhoc` (`mamh`, `tenmh`, `giangvien`) VALUES
 ('001', 'HTML', 'Quan Le Huu Minh'),
 ('002', 'JavaScript', 'QuanDepTrai'),
-('003', 'CSS', 'Viễn Anh Tho');
+('003', 'CSS', 'Viễn Anh Tho'),
+('004', 'Công Nghệ Phần Mềm', 'Hiệu');
 
 -- --------------------------------------------------------
 
@@ -216,13 +233,13 @@ ALTER TABLE `sinhvien`
 -- AUTO_INCREMENT cho bảng `lichhoc`
 --
 ALTER TABLE `lichhoc`
-  MODIFY `STT` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `STT` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT cho bảng `lichsuchat`
 --
 ALTER TABLE `lichsuchat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
 
 --
 -- Các ràng buộc cho các bảng đã đổ

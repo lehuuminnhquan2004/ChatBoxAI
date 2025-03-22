@@ -6,7 +6,6 @@ const authRoutes = require('./routes/auth');
 const forgotPasswordRoutes = require('./routes/forgotPassword');
 const pool = require('./config/db');
 const chatRoutes = require('./routes/chatbox');
-const studentRoutes = require('./routes/students');
 
 // Cấu hình dotenv để sử dụng biến môi trường từ file .env
 dotenv.config();
@@ -44,7 +43,6 @@ app.get('/api/test', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/forgot-password', forgotPasswordRoutes);
 app.use('/api/chat', chatRoutes);
-app.use('/api/students', studentRoutes);
 
 // Xử lý các yêu cầu không tìm thấy (404)
 app.use((req, res, next) => {

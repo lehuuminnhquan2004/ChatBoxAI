@@ -1,67 +1,136 @@
 import React from 'react';
-import { Box, Typography, Paper, Grid } from '@mui/material';
-import MainLayout from '../layouts/MainLayout';
+import { 
+  Grid, 
+  Paper, 
+  Typography, 
+  Avatar, 
+  Box,
+  CircularProgress,
+  List,
+  ListItem,
+  ListItemText,
+  Divider
+} from '@mui/material';
+import { 
+  School as SchoolIcon, 
+  AccessTime as AccessTimeIcon, 
+  LocationOn as LocationIcon,
+  Person as PersonIcon 
+} from '@mui/icons-material';
+import useSchedule from '../hooks/useSchedule';
 import ChatBox from './ChatBox';
 
-function Home() {
+const Home = () => {
   const user = JSON.parse(localStorage.getItem('user'));
+  const { schedule, loading, error } = useSchedule(user?.masv);
 
   return (
-    <MainLayout>
-      <Box className="p-6">
-        <Typography variant="h4" className="mb-6 text-gray-800">
-          Chào mừng, {user?.tensv}!
-        </Typography>
-
-        <Grid container spacing={3}>
-          {/* Thông tin sinh viên */}
-          <Grid item xs={12} md={4}>
-            <Paper className="p-4 shadow-md">
-              <div className="flex items-center mb-4">
-                <img
-                  src={user?.hinhanh ? `${process.env.REACT_APP_API_URL}/images/${user.hinhanh}` : '/default-avatar.png'}
-                  alt="Avatar"
-                  className="w-20 h-20 rounded-full mr-4"
-                />
-                <div>
-                  <Typography variant="h6" className="text-gray-800">
-                    {user?.tensv}
-                  </Typography>
-                  <Typography variant="body2" className="text-gray-600">
-                    {user?.masv}
-                  </Typography>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Typography variant="body2" className="text-gray-600">
-                  <span className="font-medium">Lớp:</span> {user?.lop}
-                </Typography>
-                <Typography variant="body2" className="text-gray-600">
-                  <span className="font-medium">Chuyên ngành:</span> {user?.chuyennganh}
-                </Typography>
-              </div>
-            </Paper>
-          </Grid>
-
-          {/* Thời khoá biểu hôm nay */}
-          <Grid item xs={12} md={8}>
-            <Paper className="p-4 shadow-md">
-              <Typography variant="h6" className="mb-4 text-gray-800">
-                Lịch học hôm nay
-              </Typography>
-              <Typography variant="body1" className="text-gray-600">
-                Chức năng đang được phát triển...
-              </Typography>
-            </Paper>
-          </Grid>
-
-          
+    <Box sx={{ flexGrow: 1, p: 3 }}>
+      <Grid container spacing={3}>
+        {/* Thông tin sinh viên */}
+        <Grid item xs={12} md={4}>
+          <Paper 
+            elevation={2} 
+            sx={{ 
+              p: 3,
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}
+          >
+            <Avatar
+              src={user?.hinhanh ? `${process.env.REACT_APP_API_URL}/images/${user.hinhanh}` : '/default-avatar.png'}
+              sx={{ width: 120, height: 120, mb: 2 }}
+            />
+            <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold' }}>
+              {user?.tensv}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              {user?.masv}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {user?.lop} - {user?.chuyennganh}
+            </Typography>
+          </Paper>
         </Grid>
-      </Box>
-      <ChatBox masv={user.masv} />
-    </MainLayout>
-      
+
+        {/* Thời khoá biểu hôm nay */}
+        <Grid item xs={12} md={8}>
+          <Paper 
+            elevation={2} 
+            sx={{ 
+              p: 3,
+              height: '100%'
+            }}
+          >
+            <Typography variant="h6" sx={{ mb: 3, color: '#1a237e', fontWeight: 'bold' }}>
+              Lịch học hôm nay
+            </Typography>
+            
+            {loading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+                <CircularProgress />
+              </Box>
+            ) : error ? (
+              <Typography color="error" sx={{ p: 2 }}>
+                {error}
+              </Typography>
+            ) : schedule.length > 0 ? (
+              <List>
+                {schedule.map((item, index) => (
+                  <React.Fragment key={item.STT}>
+                    <ListItem>
+                      <ListItemText
+                        primary={
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <SchoolIcon color="primary" />
+                            <Typography variant="subtitle1" component="span">
+                              {item.tenmh}
+                            </Typography>
+                          </Box>
+                        }
+                        secondary={
+                          <Box sx={{ mt: 1 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                              <PersonIcon fontSize="small" color="action" />
+                              <Typography variant="body2" component="span">
+                                {item.giangvien}
+                              </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                              <AccessTimeIcon fontSize="small" color="action" />
+                              <Typography variant="body2" component="span">
+                                {item.thoigianhoc}
+                              </Typography>
+                            </Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <LocationIcon fontSize="small" color="action" />
+                              <Typography variant="body2" component="span">
+                                Phòng {item.phong}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        }
+                      />
+                    </ListItem>
+                    {index < schedule.length - 1 && <Divider />}
+                  </React.Fragment>
+                ))}
+              </List>
+            ) : (
+              <Typography variant="body1" sx={{ color: '#666', textAlign: 'center', p: 2 }}>
+                Hôm nay không có lịch học
+              </Typography>
+            )}
+          </Paper>
+        </Grid>
+      </Grid>
+
+      {/* ChatBox */}
+      <ChatBox masv={user?.masv} />
+    </Box>
   );
-}
+};
 
 export default Home; 
